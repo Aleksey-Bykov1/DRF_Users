@@ -1,17 +1,17 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from .models import Project, ToDO
 from users.serializers import CustomSerializers
 
 
-class ProjectSerializer(serializers.ModelSerializer):
-    users = serializers.StringRelatedField(many=True)
+class ProjectSerializer(ModelSerializer):
+    users = CustomSerializers(many=True)
 
     class Meta:
         model = Project
         fields = '__all__'
 
 
-class ToDOSerializer(serializers.ModelSerializer):
+class ToDOSerializer(ModelSerializer):
     project = ProjectSerializer()
     author = CustomSerializers()
 

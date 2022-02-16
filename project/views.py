@@ -5,9 +5,9 @@ from .models import Project, ToDO
 
 class ProjectViewSet(ModelViewSet):
     queryset = Project.objects.all()
-    serializer_class = ProjectSerializer()
+    serializer_class = ProjectSerializer
 
 
 class ToDOViewSet(ModelViewSet):
     queryset = ToDO.objects.all()
-    serializer_class = ToDOSerializer()
+    serializer_class = ToDOSerializer

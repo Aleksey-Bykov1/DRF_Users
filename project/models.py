@@ -19,3 +19,6 @@ class ToDO(models.Model):
     update_date = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
     is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.notice
