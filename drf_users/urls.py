@@ -21,14 +21,18 @@ from rest_framework.routers import DefaultRouter
 # from project.views import ToDOViewSet
 
 from users.views import UserRetrieveAPIView, UserListAPIView
-# from project.views import ProjectViewSet
+from project.views import ProjectCustomViewSet
+from project.views import ProjectQuerysetFilterViewSet
+
 
 router = DefaultRouter()
 # router.register('users', CustomUserViewSet)
 # router.register('project', ProjectViewSet)
 # router.register('todo', ToDOViewSet)
 
-
+# url for project
+router.register('project', ProjectCustomViewSet)
+router.register('project_filter', ProjectQuerysetFilterViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
