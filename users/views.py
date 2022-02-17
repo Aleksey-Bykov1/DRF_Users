@@ -2,7 +2,7 @@
 from .serializers import CustomSerializers
 from .models import CustomUser
 
-from rest_framework.generics import RetrieveAPIView, ListAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView, UpdateAPIView
 
 
 class UserRetrieveAPIView(RetrieveAPIView):
@@ -11,6 +11,11 @@ class UserRetrieveAPIView(RetrieveAPIView):
 
 
 class UserListAPIView(ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomSerializers
+
+
+class UserUpdateAPIView(UpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomSerializers
 

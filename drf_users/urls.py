@@ -18,21 +18,19 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 # from users.views import CustomUserViewSet
 # from project.views import ProjectViewSet
-# from project.views import ToDOViewSet
+from project.views import ToDOViewSet
 
-from users.views import UserRetrieveAPIView, UserListAPIView
+from users.views import UserRetrieveAPIView, UserListAPIView, UpdateAPIView
 from project.views import ProjectCustomViewSet
-from project.views import ProjectQuerysetFilterViewSet
 
 
 router = DefaultRouter()
 # router.register('users', CustomUserViewSet)
 # router.register('project', ProjectViewSet)
-# router.register('todo', ToDOViewSet)
+router.register('todo', ToDOViewSet)
 
 # url for project
 router.register('project', ProjectCustomViewSet)
-router.register('project_filter', ProjectQuerysetFilterViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,6 +40,5 @@ urlpatterns = [
     # url for CustomUser
     path('generic/retrive/<int:pk>', UserRetrieveAPIView.as_view()),
     path('generic/list/', UserListAPIView.as_view()),
-
-
+    path('generic/update/', UpdateAPIView.as_view()),
 ]
