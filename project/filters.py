@@ -3,6 +3,8 @@ from project.models import ToDO
 
 
 class ToDOFilter(filters.FilterSet):
+    date = filters.DateFromToRangeFilter()
+
     class Meta:
         model = ToDO
-        fields = ['project']
+        fields = ['project', 'date_of_creation']
