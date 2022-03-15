@@ -37,7 +37,7 @@ const ProjectUserItem = ({item}) => {
 const ProjectDetail = ({getProject, item}) => {
     let {id} = useParams();
     getProject(id)
-    let user = item.users ? item.users : []
+    let users = item.users ? item.users : []
     return(
         <div>
             <h1>{item.name}</h1>
