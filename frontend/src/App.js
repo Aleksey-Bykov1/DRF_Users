@@ -10,7 +10,7 @@ import ToDOList from "./components/ToDo";
 import LoginForm from "./components/Auth";
 
 
-const DOMAIN = 'http://127.0.0.1:8000/api'
+const DOMAIN = 'http://127.0.0.1:8000/api/'
 const get_url = (url) =>`${DOMAIN}${url}`
 
 class App extends React.Component {
@@ -19,25 +19,28 @@ class App extends React.Component {
         this.state = {
             navbarItems: [
                 {name: 'Users', href: '/'},
-                {name: 'Projects', href: '/projects'},
-                {name: 'ToDOs', href: '/todos'},
+                {name: 'Projects', href: '/project'},
+                {name: 'ToDOs', href: '/todo'},
                 {name: 'Login', href: '/login'},
             ],
             users: [],
             projects: [],
             project: {},
-            todos: [],
-            auth: {username: '', is_login:false}
+            todos: []
         }
     }
 
     getToken(login, password){
-        console.log(login + ' ' + password)
+        axios.post('http://127.0.0.1:8000/api-token-auth/', {"username": login, "password": password})
+            .then(response => {
+                console.log(response.data.token)
+            })
+            .catch(error => alert("Wrong password"))
     }
 
 
    getProject(id) {
-        axios.get(get_url(`projects/${id}`))
+        axios.get(get_url(`project/${id}`))
             .then(response => {
                 console.log(response.data)
                 this.setState({project: response.data})
@@ -48,17 +51,17 @@ class App extends React.Component {
     componentDidMount() {
         axios.get(get_url('users/'))
             .then(response => {
-                this.setState({users: response.data})
+                this.setState({users: response.data.results})
             }).catch(error => console.log(error))
 
 
-        axios.get(get_url('projects/'))
+        axios.get(get_url('project/'))
             .then(response => {
                 console.log(response.data)
                 this.setState({projects: response.data.results})
             }).catch(error => console.log(error))
 
-        axios.get(get_url('todos/'))
+        axios.get(get_url('todo/'))
             .then(response => {
                 console.log(response.data)
                 this.setState({todos: response.data.results})
