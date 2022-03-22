@@ -7,6 +7,7 @@ import Navbar from "./components/Menu";
 import Footer from "./components/Footer";
 import {ProjectList, ProjectDetail} from "./components/Project";
 import ToDOList from "./components/ToDo";
+import LoginForm from "./components/Auth";
 
 
 const DOMAIN = 'http://127.0.0.1:8000/api'
@@ -20,13 +21,20 @@ class App extends React.Component {
                 {name: 'Users', href: '/'},
                 {name: 'Projects', href: '/projects'},
                 {name: 'ToDOs', href: '/todos'},
+                {name: 'Login', href: '/login'},
             ],
             users: [],
             projects: [],
             project: {},
-            todos: []
+            todos: [],
+            auth: {username: '', is_login:false}
         }
     }
+
+    getToken(login, password){
+        console.log(login + ' ' + password)
+    }
+
 
    getProject(id) {
         axios.get(get_url(`projects/${id}`))
@@ -76,6 +84,10 @@ class App extends React.Component {
                             <Route exact path='/todos'>
                                 <ToDOList items={this.state.todos}/>
                             </Route>
+                            <Route exact path='/login' component={() =>
+                                <LoginForm getToken={(login, password) => this.getToken(login, password)}/>}/>
+
+
                             <Route path="/project/:id" children={<ProjectDetail getProject={(id) => this.getProject(id)}
                                                                                 item={this.state.project}/>}/>
                         </Switch>
