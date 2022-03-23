@@ -7,7 +7,7 @@ const ToDoListItem = ({item}) => {
             <td>{item.notice}</td>
             <td>{item.author}</td>
             <td>{item.project}</td>
-            <td>{item.date_of_creation}</td>
+            <td>{item.dateOfCreation}</td>
         </tr>
     )
 }
@@ -22,7 +22,7 @@ const ToDOList = ({items}) => {
                 <th>Project</th>
                 <th>Create</th>
             </tr>
-
+            {items.map((item) => <ToDoListItem item={item}/>)}
         </table>
     )
 }

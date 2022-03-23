@@ -16,11 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-# from users.views import CustomUserViewSet
-# from project.views import ProjectViewSet
 from project.views import ToDOViewSet
 
-# from users.views import UserRetrieveAPIView, UserListAPIView, UpdateAPIView
 from users.views import CustomUserViewSet
 from project.views import ProjectViewSet
 from rest_framework_simplejwt.views import (TokenVerifyView, TokenRefreshView, TokenObtainPairView)
@@ -32,8 +29,6 @@ router.register('users', CustomUserViewSet)
 router.register('project', ProjectViewSet)
 router.register('todo', ToDOViewSet)
 
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
@@ -43,8 +38,4 @@ urlpatterns = [
     path('api/token/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/', TokenVerifyView.as_view(), name='token_verify'),
 
-    # # url for CustomUser
-    # path('generic/retrive/<int:pk>', UserRetrieveAPIView.as_view()),
-    # path('generic/list/', UserListAPIView.as_view()),
-    # path('generic/update/', UpdateAPIView.as_view()),
 ]

@@ -58,13 +58,13 @@ class App extends React.Component {
         axios.get(get_url('project/'))
             .then(response => {
                 console.log(response.data)
-                this.setState({projects: response.data.results})
+                this.setState({project: response.data.results})
             }).catch(error => console.log(error))
 
         axios.get(get_url('todo/'))
             .then(response => {
                 console.log(response.data)
-                this.setState({todos: response.data.results})
+                this.setState({todo: response.data.results})
             }).catch(error => console.log(error))
     }
 
