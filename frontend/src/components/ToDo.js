@@ -13,6 +13,7 @@ const ToDoListItem = ({item}) => {
 }
 
 const ToDOList = ({items}) => {
+    console.log('test ' + items);
     return (
         <table className="table">
             <tr>

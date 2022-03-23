@@ -19,14 +19,14 @@ class App extends React.Component {
         this.state = {
             navbarItems: [
                 {name: 'Users', href: '/'},
-                {name: 'Projects', href: '/project'},
+                {name: 'Projects', href: '/projects'},
                 {name: 'ToDOs', href: '/todo'},
             ],
             users: [],
             projects: [],
             project: {},
-            todos: [],
-            token: ''
+            todo: [],
+            token: '',
         }
     }
 
@@ -43,18 +43,18 @@ class App extends React.Component {
     logout(){
         localStorage.setItem('token', '')
         this.setState({'token': ''}, this.loadData)
-
     }
 
    getProject(id) {
         axios.get(get_url(`project/${id}`))
             .then(response => {
-                console.log(response.data)
+                // console.log(response.data)
                 this.setState({project: response.data})
             }).catch(error => console.log(error))
    }
 
    isAuthenticated(){
+        // console.log(!!this.state.token)
         return !!this.state.token
    }
 
@@ -77,10 +77,10 @@ class App extends React.Component {
                 })
         })
 
-        axios.get(get_url('project/'), {headers})
+        axios.get(get_url('projects/'), {headers})
             .then(response => {
                 console.log(response.data)
-                this.setState({project: response.data.results})
+                this.setState({projects: response.data.results})
             }).catch(error => {
                 console.log(error)
                 this.setState({
@@ -95,7 +95,7 @@ class App extends React.Component {
             }).catch(error => {
                 console.log(error)
                 this.setState({
-                    'todos': []
+                    'todo': []
                 })
         })
    }
@@ -111,7 +111,9 @@ class App extends React.Component {
         return (
             <BrowserRouter>
                 <header>
-                    <Navbar navbarItems={this.state.navbarItems}/>
+                    <Navbar navbarItems={this.state.navbarItems}
+                    isAuthenticated ={this.isAuthenticated()}
+                    logout ={this.logout}/>
                 </header>
                 <main role="main" className="flex-shrink-0">
                     <div className="container">
@@ -122,8 +124,8 @@ class App extends React.Component {
                             <Route exact path='/projects'>
                                 <ProjectList items={this.state.projects}/>
                             </Route>
-                            <Route exact path='/todos'>
-                                <ToDOList items={this.state.todos}/>
+                            <Route exact path='/todo'>
+                                <ToDOList items={this.state.todo}/>
                             </Route>
                             <Route exact path='/login' component={() =>
                                 <LoginForm getToken={(login, password) => this.getToken(login, password)}/>}/>
