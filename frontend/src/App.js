@@ -7,9 +7,10 @@ import Navbar from "./components/Menu";
 import Footer from "./components/Footer";
 import {ProjectList, ProjectDetail} from "./components/Project";
 import ToDOList from "./components/ToDo";
+import LoginForm from "./components/Auth";
 
 
-const DOMAIN = 'http://127.0.0.1:8000/api'
+const DOMAIN = 'http://127.0.0.1:8000/api/'
 const get_url = (url) =>`${DOMAIN}${url}`
 
 class App extends React.Component {
@@ -19,42 +20,90 @@ class App extends React.Component {
             navbarItems: [
                 {name: 'Users', href: '/'},
                 {name: 'Projects', href: '/projects'},
-                {name: 'ToDOs', href: '/todos'},
+                {name: 'ToDOs', href: '/todo'},
             ],
             users: [],
             projects: [],
             project: {},
-            todos: []
+            todo: [],
+            token: '',
         }
     }
 
-   getProject(id) {
-        axios.get(get_url(`projects/${id}`))
+    getToken(login, password){
+        axios.post('http://127.0.0.1:8000/api-token-auth/', {"username": login, "password": password})
             .then(response => {
-                console.log(response.data)
+                localStorage.setItem('token', response.data.token)
+                this.setState({'token': response.data.token}, this.loadData)
+                console.log(response.data.token)
+            })
+            .catch(error => alert("Wrong password"))
+    }
+
+    logout(){
+        localStorage.setItem('token', '')
+        this.setState({'token': ''}, this.loadData)
+    }
+
+   getProject(id) {
+        axios.get(get_url(`project/${id}`))
+            .then(response => {
+                // console.log(response.data)
                 this.setState({project: response.data})
             }).catch(error => console.log(error))
    }
 
+   isAuthenticated(){
+        // console.log(!!this.state.token)
+        return !!this.state.token
+   }
 
-    componentDidMount() {
-        axios.get(get_url('users/'))
+   getHeaders(){
+        if (this.isAuthenticated()){
+            return {'Authorization': 'Token' + ' ' + this.state.token}
+        }
+        return {}
+   }
+
+   loadData() {
+        const headers = this.getHeaders()
+        axios.get(get_url('users/'), {headers})
             .then(response => {
-                this.setState({users: response.data})
-            }).catch(error => console.log(error))
+                this.setState({users: response.data.results})
+            }).catch(error => {
+                console.log(error)
+                this.setState({
+                    'users': []
+                })
+        })
 
-
-        axios.get(get_url('projects/'))
+        axios.get(get_url('projects/'), {headers})
             .then(response => {
                 console.log(response.data)
                 this.setState({projects: response.data.results})
-            }).catch(error => console.log(error))
+            }).catch(error => {
+                console.log(error)
+                this.setState({
+                    'projects': []
+                })
+        })
 
-        axios.get(get_url('todos/'))
+        axios.get(get_url('todo/'), {headers})
             .then(response => {
                 console.log(response.data)
-                this.setState({todos: response.data.results})
-            }).catch(error => console.log(error))
+                this.setState({todo: response.data.results})
+            }).catch(error => {
+                console.log(error)
+                this.setState({
+                    'todo': []
+                })
+        })
+   }
+
+    componentDidMount() {
+        const token = localStorage.getItem('token')
+        console.log(token)
+        this.setState({token}, this.loadData)
     }
 
 
@@ -62,7 +111,9 @@ class App extends React.Component {
         return (
             <BrowserRouter>
                 <header>
-                    <Navbar navbarItems={this.state.navbarItems}/>
+                    <Navbar navbarItems={this.state.navbarItems}
+                    isAuthenticated ={this.isAuthenticated()}
+                    logout ={this.logout}/>
                 </header>
                 <main role="main" className="flex-shrink-0">
                     <div className="container">
@@ -73,9 +124,12 @@ class App extends React.Component {
                             <Route exact path='/projects'>
                                 <ProjectList items={this.state.projects}/>
                             </Route>
-                            <Route exact path='/todos'>
-                                <ToDOList items={this.state.todos}/>
+                            <Route exact path='/todo'>
+                                <ToDOList items={this.state.todo}/>
                             </Route>
+                            <Route exact path='/login' component={() =>
+                                <LoginForm getToken={(login, password) => this.getToken(login, password)}/>}/>
+
                             <Route path="/project/:id" children={<ProjectDetail getProject={(id) => this.getProject(id)}
                                                                                 item={this.state.project}/>}/>
                         </Switch>
