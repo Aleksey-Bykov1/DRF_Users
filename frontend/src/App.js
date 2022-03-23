@@ -21,23 +21,30 @@ class App extends React.Component {
                 {name: 'Users', href: '/'},
                 {name: 'Projects', href: '/project'},
                 {name: 'ToDOs', href: '/todo'},
-                {name: 'Login', href: '/login'},
             ],
             users: [],
             projects: [],
             project: {},
-            todos: []
+            todos: [],
+            token: ''
         }
     }
 
     getToken(login, password){
         axios.post('http://127.0.0.1:8000/api-token-auth/', {"username": login, "password": password})
             .then(response => {
+                localStorage.setItem('token', response.data.token)
+                this.setState({'token': response.data.token}, this.loadData)
                 console.log(response.data.token)
             })
             .catch(error => alert("Wrong password"))
     }
 
+    logout(){
+        localStorage.setItem('token', '')
+        this.setState({'token': ''}, this.loadData)
+
+    }
 
    getProject(id) {
         axios.get(get_url(`project/${id}`))
@@ -47,25 +54,56 @@ class App extends React.Component {
             }).catch(error => console.log(error))
    }
 
+   isAuthenticated(){
+        return !!this.state.token
+   }
 
-    componentDidMount() {
-        axios.get(get_url('users/'))
+   getHeaders(){
+        if (this.isAuthenticated()){
+            return {'Authorization': 'Token' + ' ' + this.state.token}
+        }
+        return {}
+   }
+
+   loadData() {
+        const headers = this.getHeaders()
+        axios.get(get_url('users/'), {headers})
             .then(response => {
                 this.setState({users: response.data.results})
-            }).catch(error => console.log(error))
+            }).catch(error => {
+                console.log(error)
+                this.setState({
+                    'users': []
+                })
+        })
 
-
-        axios.get(get_url('project/'))
+        axios.get(get_url('project/'), {headers})
             .then(response => {
                 console.log(response.data)
                 this.setState({project: response.data.results})
-            }).catch(error => console.log(error))
+            }).catch(error => {
+                console.log(error)
+                this.setState({
+                    'projects': []
+                })
+        })
 
-        axios.get(get_url('todo/'))
+        axios.get(get_url('todo/'), {headers})
             .then(response => {
                 console.log(response.data)
                 this.setState({todo: response.data.results})
-            }).catch(error => console.log(error))
+            }).catch(error => {
+                console.log(error)
+                this.setState({
+                    'todos': []
+                })
+        })
+   }
+
+    componentDidMount() {
+        const token = localStorage.getItem('token')
+        console.log(token)
+        this.setState({token}, this.loadData)
     }
 
 
@@ -89,7 +127,6 @@ class App extends React.Component {
                             </Route>
                             <Route exact path='/login' component={() =>
                                 <LoginForm getToken={(login, password) => this.getToken(login, password)}/>}/>
-
 
                             <Route path="/project/:id" children={<ProjectDetail getProject={(id) => this.getProject(id)}
                                                                                 item={this.state.project}/>}/>
